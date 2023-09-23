@@ -1,92 +1,58 @@
 import { useState } from "react";
+import Logo from "./Logo";
+import Form from "./Form";
+import TodoList from "./TodoList";
+import Stats from "./Stats";
 
-const initialItems = [
-  {
-    id: 1,
-    description: "kali",
-    finished: true,
-  },
-  {
-    id: 2,
-    description: "soundarya",
-    finished: false,
-  },
-];
+export const VIEW = {
+  All: "ALL",
+  Completed: "COMPLETED",
+  Active: "ACTIVE",
+};
 
 export default function App() {
-  return (
-    <div>
-      <Header />
-      <Form />
-      <TodoList />
-      <Stats />
-    </div>
-  );
-}
+  const [tasks, setTasks] = useState([]);
+  const [view, setView] = useState(VIEW.All);
 
-function Header() {
-  return <header>todos</header>;
-}
+  function handleAddTasks(task) {
+    setTasks((tasks) => [...tasks, task]);
+  }
 
-function Form() {
-  const [description, setDescription] = useState("");
+  function handleDeleteTask(id) {
+    setTasks((tasks) => tasks.filter((task) => task.id !== id));
+  }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleClearTasks() {
+    setTasks((tasks) => tasks.filter((task) => task.finished !== true));
+  }
 
-    if (!description) return;
-
-    const newItem = { description, finished: false, id: Date.now() };
-    console.log(newItem);
-
-    setDescription("");
+  function handleToggleTask(id) {
+    setTasks((tasks) =>
+      tasks.map((task) =>
+        task.id === id ? { ...task, finished: !task.finished } : task
+      )
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <button>\/</button>
-      <input
-        type="text"
-        placeholder="What needs to be done?"
-        value={description}
-        onChange={(e) => {
-          setDescription(e.target.value);
-        }}
-      />
-    </form>
-  );
-}
-
-function TodoList() {
-  return (
-    <ul>
-      {initialItems.map((item) => (
-        <Item item={item} key={item.id} />
-      ))}
-    </ul>
-  );
-}
-
-function Item({ item }) {
-  return (
-    <>
-      <li>
-        <span style={item.finished ? { textDecoration: "line-through" } : {}}>
-          {item.description}
-        </span>
-        <button>&times;</button>
-      </li>
-    </>
-  );
-}
-
-function Stats() {
-  return (
-    <div>
-      <p> X item left</p>
-      <button>All</button>
-      <button>Active</button>
-      <button>Completed</button>
+    <div className="flex min-h-screen justify-center pt-20 bg-stone-100">
+      <div className="flex-col justify-center gap-8">
+        <Logo />
+        <div className="flex-col bg-white  mt-5 shadow-gray-400 shadow-lg ">
+          <Form onAddTasks={handleAddTasks} />
+          <TodoList
+            tasks={tasks}
+            view={view}
+            onDeleteTask={handleDeleteTask}
+            onToggleTask={handleToggleTask}
+          />
+          <Stats
+            tasks={tasks}
+            onClearTask={handleClearTasks}
+            onViewChange={setView}
+          />
+        </div>
+      </div>
     </div>
   );
 }
