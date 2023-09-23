@@ -33,7 +33,7 @@ function Task({ task, onDeleteTask, onToggleTask }) {
       <div className="flex px-3 mt-3 mb-2 ">
         <input
           type="checkbox"
-          className=" h-8 w-8 mt-1 rounded-full opacity-30 focus:ring-0 text-green-500"
+          className=" h-8 w-8 mt-1 rounded-full border-gray-300 text-green-300  focus:ring-0"
           value={task.finished}
           onChange={() => onToggleTask(task.id)}
         />
